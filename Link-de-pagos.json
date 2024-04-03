@@ -1,0 +1,680 @@
+{
+  "openapi": "3.1.0",
+  "x-stoplight": {
+    "id": "h729qpwlzr6zy"
+  },
+  "info": {
+    "version": "1.0",
+    "title": "API para Link de pagos",
+    "description": "La API de PlaceToPay para enlaces de pagos permite a los comerciantes crear enlaces de pago personalizados que los clientes pueden utilizar para realizar pagos de productos y servicios de forma segura. Los enlaces de pago se pueden personalizar con detalles específicos de la transacción. Tambien ofrece la posibilidad de consultar la información de un link que ha sido creado previamente para conocer el estado de las transacciones realizadas a través de este."
+  },
+  "servers": [
+    {
+      "url": " https://dev.placetopay.com/microsites"
+    }
+  ],
+  "paths": {
+    "/api/payment-link": {
+      "post": {
+        "summary": "Crear un link de pago",
+        "description": "Este endpoint se utiliza para la creación de un nuevo link de pago\n\n**Nota:** Si deseas hacer el envió del link por email debes agregar los correos deseados en el campo `receiverEmails`, ya que este proceso se realiza al momento de creación del link",
+        "operationId": "Crear un link de pago",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "auth": {
+                    "type": "object",
+                    "description": "El objeto **auth** es obligatorio para lograr conectarse de forma segura a nuestros servicios",
+                    "properties": {
+                      "login": {
+                        "type": "string",
+                        "description": "Identificador del sitio",
+                        "examples": [
+                          "1441d14df19ec88431e513bb990326e1"
+                        ]
+                      },
+                      "tranKey": {
+                        "type": "string",
+                        "description": "Credencial **tranKey** generado",
+                        "examples": [
+                          "DGYymv6ohpYwtLWon/iADE/COoo9JXt4jqyk6D006PY="
+                        ]
+                      },
+                      "nonce": {
+                        "type": "string",
+                        "description": "Valor **aleatorio** para cada solicitud codificado en **Base64.**",
+                        "examples": [
+                          "enQ4dXh3YWhkMWM="
+                        ]
+                      },
+                      "seed": {
+                        "type": "string",
+                        "description": "Fecha **actual**, la cual se genera en formato **ISO 8601**.",
+                        "examples": [
+                          "2023-06-21T09:56:06-05:00"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "login",
+                      "tranKey",
+                      "nonce",
+                      "seed"
+                    ]
+                  },
+                  "locale": {
+                    "type": "string",
+                    "enum": [
+                      "en",
+                      "es",
+                      "pt",
+                      "it",
+                      "fr"
+                    ],
+                    "description": "Idioma en que sera enviado el link de pago a través de email **|| Si este campo no se envia el locale se asignara \"es\" por defecto**"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Nombre que sera asociado al link de pago",
+                    "examples": [
+                      "my-product-name"
+                    ]
+                  },
+                  "paymentsAllowed": {
+                    "type": "integer",
+                    "description": "Cantidad de pagos que se podran realizar a través del link **|| Si este campo no se envia, el link quedara configurado con una cantidad ilimitada de pagos permitidos**",
+                    "examples": [
+                      7
+                    ]
+                  },
+                  "expirationDate": {
+                    "type": "string",
+                    "description": "Fecha en que el link dejara de estar activo (**La fecha debe ser superior a la fecha actual del usuario**)",
+                    "examples": [
+                      "2023-10-21 16:40:10"
+                    ]
+                  },
+                  "paymentExpiration": {
+                    "type": "integer",
+                    "description": "Cantidad en **minutos** del tiempo para cada sesion de Checkout",
+                    "examples": [
+                      15
+                    ]
+                  },
+                  "currency": {
+                    "type": "string",
+                    "description": "Moneda en que se realizara el cobro del link",
+                    "examples": [
+                      "USD"
+                    ]
+                  },
+                  "amount": {
+                    "type": "integer",
+                    "description": "Monto total que tendrá pago que se realizara a través del link ",
+                    "examples": [
+                      "100"
+                    ]
+                  },
+                  "reference": {
+                    "type": "string",
+                    "description": "Referencia que sera asociada al link",
+                    "examples": [
+                      "Reference123"
+                    ]
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Descripcion asociada al link de pago",
+                    "examples": [
+                      "Descripción de mi producto"
+                    ]
+                  },
+                  "receiverEmails": {
+                    "type": "array",
+                    "description": "Lista de correos a los que sera enviado el link una vez que se haya creado correctamente",
+                    "items": {
+                      "type": "string",
+                      "format": "email",
+                      "examples": [
+                        "placetopay@evertecinc.com"
+                      ]
+                    }
+                  },
+                  "adittional": {
+                    "type": "object",
+                    "description": "Campos adicionales para link de pago",
+                    "properties": {
+                      "": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "auth",
+                  "name",
+                  "paymentsAllowed",
+                  "expirationDate",
+                  "paymentExpiration",
+                  "currency",
+                  "amount",
+                  "reference",
+                  "description"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "examples": [
+                            "OK"
+                          ]
+                        },
+                        "reason": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "date": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "reason",
+                        "message",
+                        "date"
+                      ]
+                    },
+                    "id": {
+                      "type": "integer",
+                      "description": "Id unico e incremental del link de pago creado",
+                      "examples": [
+                        1
+                      ]
+                    },
+                    "link": {
+                      "type": "string",
+                      "description": "Url del link de pago",
+                      "examples": [
+                        "http://microsites.test/link/show?genid=27&code=47799bd5a08501e4bf08462f71f0f6a3e0f3e069"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Status": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "examples": [
+                            "FAILED"
+                          ]
+                        },
+                        "reason": {
+                          "type": "integer",
+                          "default": 400
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "Unable to start payment, please try again"
+                          ]
+                        },
+                        "date": {
+                          "type": "string",
+                          "examples": [
+                            "2023-10-27T10:37:41-05:00"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "reason",
+                        "message",
+                        "date"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "Status"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "servers": [
+          {
+            "url": " https://dev.placetopay.com/microsites"
+          }
+        ],
+        "x-stoplight": {
+          "id": "7hzkts3nksm2l"
+        }
+      }
+    },
+    "/api/payment-link/{link}": {
+      "post": {
+        "summary": "Consultar un link de pago",
+        "description": "",
+        "operationId": "Consultar un link de pago",
+        "parameters": [
+          {
+            "name": "link",
+            "in": "path",
+            "description": "Id del link a consultar",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "auth": {
+                    "type": "object",
+                    "description": "El objeto **auth** es obligatorio para lograr conectarse de forma segura a nuestros servicios",
+                    "properties": {
+                      "login": {
+                        "type": "string",
+                        "description": "Identificador del sitio",
+                        "examples": [
+                          "1441d14df19ec88431e513bb990326e1"
+                        ]
+                      },
+                      "tranKey": {
+                        "type": "string",
+                        "description": "Credencial **tranKey** generado",
+                        "examples": [
+                          "DGYymv6ohpYwtLWon/iADE/COoo9JXt4jqyk6D006PY="
+                        ]
+                      },
+                      "nonce": {
+                        "type": "string",
+                        "description": "Valor **aleatorio** para cada solicitud codificado en **Base64**.",
+                        "examples": [
+                          "enQ4dXh3YWhkMWM="
+                        ]
+                      },
+                      "seed": {
+                        "type": "string",
+                        "description": "Fecha **actual**, la cual se genera en formato **ISO 8601**.",
+                        "examples": [
+                          "2023-06-21T09:56:06-05:00"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "login",
+                      "tranKey",
+                      "nonce",
+                      "seed"
+                    ]
+                  }
+                },
+                "required": [
+                  "auth"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "description": "Id del link consultado",
+                      "examples": [
+                        26
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ACTIVE",
+                        "INACTIVE"
+                      ],
+                      "description": "Estado del link consultado"
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "Url del link consultado",
+                      "examples": [
+                        "http://microsites.test/link/show?genid=26&code=47384ed1309a1a4ebe09050d8b0caa22553047ef"
+                      ]
+                    },
+                    "expiration_date": {
+                      "type": "string",
+                      "description": "Fecha de expiracion del link consultado",
+                      "examples": [
+                        "2023-10-25 09:39:34"
+                      ]
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Nombre asociado al link consultado",
+                      "examples": [
+                        "My-product-name"
+                      ]
+                    },
+                    "reference": {
+                      "type": "string",
+                      "description": "Referencia asociada al link consultado"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Descripcion asociada a un link de pago",
+                      "examples": [
+                        "Descripción de un link de pago"
+                      ]
+                    },
+                    "total_payments": {
+                      "type": "integer",
+                      "description": "Cantidad de pagos permitidos a través del link consultado",
+                      "examples": [
+                        7
+                      ]
+                    },
+                    "available_payments": {
+                      "type": "integer",
+                      "description": "Cantidad de pagos disponibles en el link consultado",
+                      "examples": [
+                        6
+                      ]
+                    },
+                    "payment_expiration": {
+                      "type": "integer",
+                      "description": "Minutos que dura una sesion de pago en expirar ",
+                      "examples": [
+                        15
+                      ]
+                    },
+                    "currency": {
+                      "type": "string",
+                      "description": "Moneda en que se realiza el cobro del link",
+                      "examples": [
+                        "USD"
+                      ]
+                    },
+                    "amount": {
+                      "type": "integer",
+                      "description": "Monto total que tiene cada pago que se realizara a través del link"
+                    },
+                    "site": {
+                      "type": "object",
+                      "description": "Informacion del sitio asociado al link de pago",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "Id del sitio al que esta asociado el link de pago",
+                          "examples": [
+                            112
+                          ]
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Nombre del sitio asociado",
+                          "examples": [
+                            "Ebus PFKR 2"
+                          ]
+                        },
+                        "display_name": {
+                          "type": "string",
+                          "description": "Nombre para mostrar del sitio"
+                        },
+                        "currencies": {
+                          "type": "array",
+                          "description": "Lista de monedas que son aceptadas por el sitio asociado",
+                          "items": {
+                            "type": "string",
+                            "examples": [
+                              "USD"
+                            ]
+                          }
+                        },
+                        "default_currency": {
+                          "type": "string",
+                          "description": "Moneda por defecto del sitio asociado",
+                          "examples": [
+                            "USD"
+                          ]
+                        },
+                        "default_country": {
+                          "type": "string",
+                          "description": "Pais por defecto asociado al sitio",
+                          "examples": [
+                            "en_US"
+                          ]
+                        },
+                        "locale": {
+                          "type": "string",
+                          "description": "Idioma asociado al sitio",
+                          "examples": [
+                            "ES"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "currencies",
+                        "default_currency",
+                        "default_country",
+                        "locale"
+                      ]
+                    },
+                    "payments": {
+                      "type": "array",
+                      "description": "Lista que contiene todos los pagos realizados a través del link. **( Si no se ha realizado ningun pago este campo se mostrara como un array vacio )**",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "description": "id del pago realizado",
+                            "examples": [
+                              22
+                            ]
+                          },
+                          "request_id": {
+                            "type": "integer"
+                          },
+                          "status": {
+                            "type": "string",
+                            "description": "Estado de la transaccion realizada",
+                            "examples": [
+                              "APPROVED"
+                            ]
+                          },
+                          "message": {
+                            "type": "string",
+                            "description": "Mensaje del estado de la transaccion",
+                            "examples": [
+                              "La petición ha sido aprobada exitosamente"
+                            ]
+                          },
+                          "proccess_url": {
+                            "type": "string",
+                            "description": "Url de la sesion de pago en la que se realizo la transaccion",
+                            "examples": [
+                              "https://checkout-co.placetopay.dev/spa/session/80108/f19f3030c9a9fa305f5fd99a3d475d94"
+                            ]
+                          },
+                          "amount": {
+                            "type": "object",
+                            "properties": {
+                              "currency": {
+                                "type": "string",
+                                "description": "Moneda en que se realizo el cobro de la transaccion"
+                              },
+                              "total": {
+                                "type": "string",
+                                "description": "Monto total que se cobro en la transaccion"
+                              }
+                            }
+                          },
+                          "internal_reference": {
+                            "type": "integer",
+                            "description": "Id de la petición"
+                          },
+                          "authorization": {
+                            "type": "string",
+                            "description": "Código de autorización."
+                          },
+                          "payment_method": {
+                            "type": "string",
+                            "description": "Metodo de pago utilizado para la transaccion"
+                          },
+                          "payer": {
+                            "type": "object",
+                            "description": "Informacion del pagador que realizo la transaccion",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "description": "Nombre del pagador"
+                              },
+                              "surname": {
+                                "type": "string",
+                                "description": "Segundo nombre del pagador"
+                              },
+                              "email": {
+                                "type": "string",
+                                "description": "Email del pagador",
+                                "examples": [
+                                  "pagador@gmail.com"
+                                ]
+                              },
+                              "phone": {
+                                "type": "string",
+                                "description": "Telefono del pagador",
+                                "examples": [
+                                  "+1 123123123"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "status",
+                    "url",
+                    "expiration_date",
+                    "name",
+                    "reference",
+                    "description",
+                    "total_payments",
+                    "available_payments",
+                    "payment_expiration",
+                    "currency",
+                    "amount",
+                    "site"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found ( Se intento consultar un link inexistente)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "examples": [
+                            "FAILED"
+                          ]
+                        },
+                        "reason": {
+                          "type": "integer"
+                        },
+                        "message": {
+                          "type": "string",
+                          "examples": [
+                            "El link con ID 13 no existe"
+                          ]
+                        },
+                        "date": {
+                          "type": "string",
+                          "examples": [
+                            "2023-10-27T10:39:47-05:00"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "reason",
+                        "message",
+                        "date"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "servers": [
+          {
+            "url": " https://dev.placetopay.com/microsites"
+          }
+        ],
+        "x-stoplight": {
+          "id": "08ix4elnc4kxf"
+        }
+      }
+    }
+  }
+}
