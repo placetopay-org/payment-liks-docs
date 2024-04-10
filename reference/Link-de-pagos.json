@@ -971,28 +971,32 @@
                         "x-stoplight": {
                           "id": "rkx5vh66kqqrb"
                         },
-                        "description": "Identificador del sitio"
+                        "description": "Identificador del sitio",
+                        "example": "1441d14df19ec88431e513bb990326e1"
                       },
                       "tranKey": {
                         "type": "string",
                         "x-stoplight": {
                           "id": "wkf7mdyeesb2d"
                         },
-                        "description": "Credencial **tranKey** generado"
+                        "description": "Credencial **tranKey** generado",
+                        "example": "DGYymv6ohpYwtLWon/iADE/COoo9JXt4jqyk6D006PY="
                       },
                       "nonce": {
                         "type": "string",
                         "x-stoplight": {
                           "id": "kdgpdkng43yab"
                         },
-                        "description": "Valor **aleatorio** para cada solicitud codificado en **Base64**."
+                        "description": "Valor **aleatorio** para cada solicitud codificado en **Base64**.",
+                        "example": "enQ4dXh3YWhkMWM="
                       },
                       "seed": {
                         "type": "string",
                         "x-stoplight": {
                           "id": "jtfb8isvqktei"
                         },
-                        "description": "Fecha **actual**, la cual se genera en formato **ISO 8601**."
+                        "description": "Fecha **actual**, la cual se genera en formato **ISO 8601**.",
+                        "example": "2023-06-21T09:56:06-05:00"
                       }
                     }
                   }
