@@ -675,6 +675,152 @@
           "id": "08ix4elnc4kxf"
         }
       }
+    },
+    "/api/payment-link/disable/{link}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "link",
+          "in": "path",
+          "required": true
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "link",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "post": {
+        "summary": "Desactivar un link de pago ( En desarrollo )",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "El link de pago, ya se encuentra desactivado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "object",
+                      "x-stoplight": {
+                        "id": "1kexz8nt717ls"
+                      },
+                      "required": [
+                        "status",
+                        "reason",
+                        "message",
+                        "date"
+                      ],
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "x-stoplight": {
+                            "id": "k78pml07pywwa"
+                          }
+                        },
+                        "reason": {
+                          "type": "integer",
+                          "x-stoplight": {
+                            "id": "m1hgszl4ijd0l"
+                          }
+                        },
+                        "message": {
+                          "type": "string",
+                          "x-stoplight": {
+                            "id": "jeuh5r4ilnpxs"
+                          }
+                        },
+                        "date": {
+                          "type": "string",
+                          "x-stoplight": {
+                            "id": "9qkpwhtyirnfb"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "operationId": "Desactivar un link de pago",
+        "x-stoplight": {
+          "id": "tz6ngh6jotshk"
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "auth"
+                ],
+                "properties": {
+                  "auth": {
+                    "type": "object",
+                    "x-stoplight": {
+                      "id": "ji2rm6808vhy9"
+                    },
+                    "description": "El objeto **auth** es obligatorio para lograr conectarse de forma segura a nuestros servicios",
+                    "required": [
+                      "login",
+                      "tranKey",
+                      "nonce",
+                      "seed"
+                    ],
+                    "properties": {
+                      "login": {
+                        "type": "string",
+                        "x-stoplight": {
+                          "id": "rkx5vh66kqqrb"
+                        },
+                        "description": "Identificador del sitio"
+                      },
+                      "tranKey": {
+                        "type": "string",
+                        "x-stoplight": {
+                          "id": "wkf7mdyeesb2d"
+                        },
+                        "description": "Credencial **tranKey** generado"
+                      },
+                      "nonce": {
+                        "type": "string",
+                        "x-stoplight": {
+                          "id": "kdgpdkng43yab"
+                        },
+                        "description": "Valor **aleatorio** para cada solicitud codificado en **Base64**."
+                      },
+                      "seed": {
+                        "type": "string",
+                        "x-stoplight": {
+                          "id": "jtfb8isvqktei"
+                        },
+                        "description": "Fecha **actual**, la cual se genera en formato **ISO 8601**."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
