@@ -25,10 +25,27 @@
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": [
+                  "auth",
+                  "name",
+                  "paymentsAllowed",
+                  "expirationDate",
+                  "paymentExpiration",
+                  "currency",
+                  "amount",
+                  "reference",
+                  "description"
+                ],
                 "properties": {
                   "auth": {
                     "type": "object",
                     "description": "El objeto **auth** es obligatorio para lograr conectarse de forma segura a nuestros servicios",
+                    "required": [
+                      "login",
+                      "tranKey",
+                      "nonce",
+                      "seed"
+                    ],
                     "properties": {
                       "login": {
                         "type": "string",
@@ -58,13 +75,7 @@
                           "2023-06-21T09:56:06-05:00"
                         ]
                       }
-                    },
-                    "required": [
-                      "login",
-                      "tranKey",
-                      "nonce",
-                      "seed"
-                    ]
+                    }
                   },
                   "locale": {
                     "type": "string",
@@ -148,23 +159,16 @@
                     "type": "object",
                     "description": "Campos adicionales para link de pago",
                     "properties": {
-                      "": {
-                        "type": "string"
+                      "name": {
+                        "type": "string",
+                        "x-stoplight": {
+                          "id": "ty266sblqwu50"
+                        },
+                        "example": "Francis"
                       }
                     }
                   }
-                },
-                "required": [
-                  "auth",
-                  "name",
-                  "paymentsAllowed",
-                  "expirationDate",
-                  "paymentExpiration",
-                  "currency",
-                  "amount",
-                  "reference",
-                  "description"
-                ]
+                }
               }
             }
           }
@@ -287,7 +291,7 @@
     "/api/payment-link/{link}": {
       "post": {
         "summary": "Consultar un link de pago",
-        "description": "",
+        "description": "Utiliza este endpoint para consultar links de pagos que hayan sido creados previamente\r\n\r\n**Nota:** Solo te sera posible consultar links de pago asociados a tu sitio",
         "operationId": "Consultar un link de pago",
         "parameters": [
           {
@@ -700,10 +704,72 @@
         "tags": [],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "**OK**\r\n\r\nLink de pago desactivado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "id"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "object",
+                      "x-stoplight": {
+                        "id": "8u668tnxe9uuv"
+                      },
+                      "required": [
+                        "status",
+                        "reason",
+                        "message",
+                        "date"
+                      ],
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "x-stoplight": {
+                            "id": "5n776vjbh2f3g"
+                          },
+                          "example": "OK"
+                        },
+                        "reason": {
+                          "type": "string",
+                          "x-stoplight": {
+                            "id": "e01i5ou83xzic"
+                          },
+                          "default": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "x-stoplight": {
+                            "id": "yzk75eh2c9sl1"
+                          },
+                          "example": "Payment link successfully deactivated"
+                        },
+                        "date": {
+                          "type": "string",
+                          "x-stoplight": {
+                            "id": "2qshr9jy394td"
+                          },
+                          "example": "2024-04-10T00:58:34-05:00"
+                        }
+                      }
+                    },
+                    "id": {
+                      "type": "string",
+                      "x-stoplight": {
+                        "id": "mj6ijhsbwavdu"
+                      },
+                      "description": "Id de el link que ha sido desactivado"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "El link de pago, ya se encuentra desactivado",
+            "description": "**Solicitud incorrecta**\r\n\r\nSi el servicio te arroja esta respuesta es posible que tengas: \r\n- Request mal formado\r\n- El link de pago, ya se encuentra desactivado",
             "content": {
               "application/json": {
                 "schema": {
@@ -756,7 +822,118 @@
             }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "**No autorizado**\r\n\r\nSi el servicio te arroja esta respuesta es posible que tengas:\r\n- Autenticion mal formada\r\n- Intento de comunicacion con un link que no pertenece a tu sitio",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "object",
+                      "x-stoplight": {
+                        "id": "gflatctpf04hr"
+                      },
+                      "required": [
+                        "status",
+                        "reason",
+                        "message",
+                        "date"
+                      ],
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "x-stoplight": {
+                            "id": "2w03gku3uqz9d"
+                          },
+                          "example": "FAILED"
+                        },
+                        "reason": {
+                          "type": "integer",
+                          "x-stoplight": {
+                            "id": "c10k5i9hfeald"
+                          },
+                          "example": 401
+                        },
+                        "message": {
+                          "type": "string",
+                          "x-stoplight": {
+                            "id": "8zllzqd4fdu1q"
+                          },
+                          "example": "You do not have permission to access this site"
+                        },
+                        "date": {
+                          "type": "string",
+                          "x-stoplight": {
+                            "id": "8xdqhendjsp35"
+                          },
+                          "example": "2024-04-10T00:42:09-05:00"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "**No encontrado**\r\n\r\nSi el servicio te arroja esta respuesta es posible que tengas:\r\n\r\n- Estas intentando acceder a un recurso que no existe o no ha sido creado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "object",
+                      "x-stoplight": {
+                        "id": "06reelsaajk1r"
+                      },
+                      "required": [
+                        "status",
+                        "reason",
+                        "message",
+                        "date"
+                      ],
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "x-stoplight": {
+                            "id": "t5um4w223eskf"
+                          },
+                          "example": "FAILED"
+                        },
+                        "reason": {
+                          "type": "string",
+                          "x-stoplight": {
+                            "id": "ah4zof55wjel8"
+                          },
+                          "example": "404"
+                        },
+                        "message": {
+                          "type": "string",
+                          "x-stoplight": {
+                            "id": "y4en58f7wooxn"
+                          },
+                          "example": "The payment link consulted does not exist"
+                        },
+                        "date": {
+                          "type": "string",
+                          "x-stoplight": {
+                            "id": "r440arzyu8gxc"
+                          },
+                          "example": "2024-04-10T00:53:10-05:00"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "operationId": "Desactivar un link de pago",
@@ -819,7 +996,8 @@
               }
             }
           }
-        }
+        },
+        "description": "Utiliza este endpoint para desactivar links que no hayan expirado\r\n\r\n**Nota:** Solo te sera posible desactivar links de pago asociados a tu sitio"
       }
     }
   }
