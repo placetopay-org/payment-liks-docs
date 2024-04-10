@@ -794,25 +794,29 @@
                           "type": "string",
                           "x-stoplight": {
                             "id": "k78pml07pywwa"
-                          }
+                          },
+                          "example": "FAILED"
                         },
                         "reason": {
                           "type": "integer",
                           "x-stoplight": {
                             "id": "m1hgszl4ijd0l"
-                          }
+                          },
+                          "example": 400
                         },
                         "message": {
                           "type": "string",
                           "x-stoplight": {
                             "id": "jeuh5r4ilnpxs"
-                          }
+                          },
+                          "example": "The payment link with ID 1 is already deactivated"
                         },
                         "date": {
                           "type": "string",
                           "x-stoplight": {
                             "id": "9qkpwhtyirnfb"
-                          }
+                          },
+                          "example": "2024-04-10T01:01:21-05:00"
                         }
                       }
                     }
