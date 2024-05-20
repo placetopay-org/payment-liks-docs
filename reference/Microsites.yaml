@@ -1,0 +1,445 @@
+openapi: 3.0.0
+x-stoplight:
+  id: 77vbitm5d3ufw
+info:
+  version: '1.0'
+  title: Microsites
+  contact: ''
+servers:
+  - url: 'https://dev.placetopay.com/microsites'
+paths:
+  /api/microsites:
+    post:
+      summary: Create an open/closed Microsite
+      responses:
+        '201':
+          $ref: '#/components/responses/Status - OK'
+        '401':
+          $ref: '#/components/responses/Status - Unauthorized'
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/Status'
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - status
+                  - errors
+              examples:
+                Validation Error:
+                  value:
+                    status:
+                      status: FAILED
+                      reason: '422'
+                      message: Error de validación.
+                      date: '2021-03-26T16:39:59-05:00'
+                    errors:
+                      name:
+                        - El valor ingresado en el campo de nombre ya ha sido registrado.
+                      alias:
+                        - El valor ingresado en el campo de alias ya ha sido registrado.
+      operationId: post-api-microsites
+      description: |
+        This endpoint helps to create one microsite (open/closed), it's exclusive for a microsites api users, the microsite is created enable by default.
+
+        - **auth:** service authentication credentials. 
+          - **login** Site identifier.
+          - **tranKey** Transactional key: Base64(SHA-1(nonce + seed + secretkey)). The nonce field must be in the original format (without Base64).
+          - **nonce** Ramdom value Base64 encoded.
+          - **seed** current date in ISO 8601 format.
+
+        - **type:** This field is required, you must to send *OPEN* or *CLOSED*
+
+        - **categories:** This field is mandatory, you must to send once or many *category alias*, it's an array.
+
+        - **sites:** This field is mandatory, you must to send at least one Panel site id, it's an array.
+
+        - **loginFields:** This field is mandatory only when type is *CLOSED*
+
+        - **header**, **logo**, **footer** are optional.
+
+        - **paymentExpiration:** WebCheckout time expiration in minutes, 10 minutes by default. It's an optional field.
+
+        - Available configuration options for payments. All are optional fields.
+          - allowPartial
+          - isNoBuyerFill (only *CLOSED* type)
+          - allowDispersion (only *CLOSED* type)
+          - allowPayWithDuplicateReference
+          - allowUnlimitedInstallments (only *CLOSED* type)
+          - autoReferenced (only *OPEN* type)
+          - allowRecurrence (only *OPEN* type)
+          - notSendBuyerAsPayer (only *OPEN* type)
+          - onlyPaymentLink (only *OPEN* type)
+
+        - Available configuration options for invoice session (only *CLOSED* type). All are optional fields.
+          - exactSearchByReference
+          - showDescription
+          - allowShowDebtorName
+          - allowPayMultipleInvoicesAtOnce
+          - allowSendDebtorCode
+          - allowChangeTotal
+          - olderFirst
+          - allowSeeHistoryPayments
+          - loginFromUrl
+          - flushInvoices
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              description: ''
+              type: object
+              properties:
+                auth:
+                  $ref: '#/components/schemas/Auth'
+                name:
+                  type: string
+                  minLength: 1
+                alias:
+                  type: string
+                  minLength: 1
+                type:
+                  type: string
+                  description: Allowed values "OPEN" or "CLOSED"
+                categories:
+                  type: array
+                  items:
+                    type: string
+                sites:
+                  type: array
+                  items:
+                    type: integer
+                loginFields:
+                  type: array
+                  minItems: 2
+                  description: Allowed values document|reference|alt_reference
+                header:
+                  type: string
+                  format: binary
+                  description: Allowed jpg|jpeg|png|svg
+                logo:
+                  type: string
+                  format: binary
+                  description: Allowed jpg|jpeg|png|svg
+                footer:
+                  type: string
+                  format: binary
+                  description: Allowed jpg|jpeg|png|svg
+                paymentExpiration:
+                  type: integer
+                  description: 10 by default
+                disabled:
+                  type: boolean
+                  default: false
+                  description: Disable/Enable the Microsite
+                useWcLightbox:
+                  type: boolean
+                  default: false
+                  description: Redirection using Lightbox
+                hide:
+                  type: boolean
+                  default: false
+                  description: Hide in the public search list
+                allowPartial:
+                  type: boolean
+                  default: false
+                  description: Allows mixed payments
+                isNoBuyerFill:
+                  type: boolean
+                  default: true
+                  description: Pre-fill payer information
+                allowDispersion:
+                  type: boolean
+                  default: false
+                  description: Allows payments with dispersion
+                allowPayWithDuplicateReference:
+                  type: boolean
+                  default: false
+                  description: Allows multiple payments with the same reference
+                allowUnlimitedInstallments:
+                  type: boolean
+                  default: false
+                  description: Allow unlimited deposits
+                autoReferenced:
+                  type: boolean
+                  default: false
+                  description: Automatically generate references
+                allowRecurrence:
+                  type: boolean
+                  default: false
+                  description: Enable recurrence
+                notSendBuyerAsPayer:
+                  type: boolean
+                  default: true
+                  description: Send buyer as payer
+                onlyPaymentLink:
+                  type: boolean
+                  default: false
+                  description: Only available using Payment Link
+                exactSearchByReference:
+                  type: boolean
+                  default: false
+                  description: Show only invoice with reference associated to access fields
+                allowPayMultipleInvoicesAtOnce:
+                  type: boolean
+                  default: false
+                  description: Allows you to pay multiple invoices at once
+                showDescription:
+                  type: boolean
+                  default: true
+                  description: Show the description of the payment order
+                allowShowDebtorName:
+                  type: boolean
+                  default: false
+                  description: Show name of the person responsible for the payment order
+                allowSendDebtorCode:
+                  type: boolean
+                  default: false
+                  description: Allows to use the alternate reference as the payment description
+                allowChangeTotal:
+                  type: boolean
+                  default: false
+                  description: Allows to change the total of the invoice
+                olderFirst:
+                  type: boolean
+                  default: false
+                  description: Pay older first
+                allowSeeHistoryPayments:
+                  type: boolean
+                  default: true
+                  description: Allows to see payment history
+                loginFromUrl:
+                  type: boolean
+                  default: true
+                  description: Allows login by URL (GET)
+                flushInvoices:
+                  type: boolean
+                  default: true
+                  description: Delete expired and unpaid invoices
+              required:
+                - auth
+                - name
+                - alias
+                - type
+                - categories
+                - sites
+                - loginFields
+            examples:
+              Basic:
+                value:
+                  auth:
+                    login: string
+                    tranKey: string
+                    nonce: string
+                    seed: string
+                  name: string
+                  alias: string
+                  type: string
+                  categories: []
+                  sites: []
+                  loginFields: integer
+                  allowPartial: true
+                  header: string
+              Closed:
+                value:
+                  auth:
+                    login: ''
+                    tranKey: ''
+                    nonce: ''
+                    seed: ''
+                  name: Test closed 10
+                  alias: m-closed-10
+                  type: CLOSED
+                  categories:
+                    - test_tecnologia
+                  sites:
+                    - 4
+                    - 32
+                  loginFields:
+                    - document
+                    - reference
+                  allowPayMultipleInvoicesAtOnce: true
+                  useWcLightbox: true
+              Open:
+                value:
+                  auth:
+                    login: ''
+                    tranKey: ''
+                    nonce: ''
+                    seed: ''
+                  name: Test open 11
+                  alias: m-open-11
+                  type: OPEN
+                  categories:
+                    - test_tecnologia
+                  sites:
+                    - 4
+                    - 32
+                  allowRecurrence: true
+                  allowPartial: true
+      x-stoplight:
+        id: 62n1o2rozpmjd
+components:
+  responses:
+    Status - OK:
+      description: Status Response
+      content:
+        application/json:
+          schema:
+            description: ''
+            type: object
+            properties:
+              status:
+                $ref: '#/components/schemas/Status'
+            required:
+              - status
+          examples:
+            OK:
+              value:
+                status:
+                  status: OK
+                  reason: '201'
+                  message: Micrositio creado correctamente
+                  date: '2021-03-26T16:19:31-05:00'
+    Status - Unauthorized:
+      description: Status Response
+      content:
+        application/json:
+          schema:
+            description: ''
+            type: object
+            properties:
+              status:
+                $ref: '#/components/schemas/Status'
+            required:
+              - status
+          examples:
+            Unauthorized:
+              value:
+                status:
+                  status: FAILED
+                  reason: '401'
+                  message: 'La autenticación no contiene todos los parámetros requeridos (login, tranKey, seed, nonce)'
+                  date: '2021-03-26T16:26:03-05:00'
+            Bad login:
+              value:
+                status:
+                  status: FAILED
+                  reason: '401'
+                  message: Autenticación fallida 101
+                  date: '2021-03-26T16:29:45-05:00'
+            Inactive User:
+              value:
+                status:
+                  status: FAILED
+                  reason: '401'
+                  message: Autenticación fallida 104
+                  date: '2021-03-26T16:29:45-05:00'
+            Bad TranKey:
+              value:
+                status:
+                  status: FAILED
+                  reason: '401'
+                  message: Autenticación fallida 102
+                  date: '2021-03-26T16:29:45-05:00'
+            Bad Seed:
+              value:
+                status:
+                  status: FAILED
+                  reason: '401'
+                  message: Autenticación fallida 103
+                  date: '2021-03-26T16:29:45-05:00'
+  schemas:
+    Status:
+      description: ''
+      type: object
+      properties:
+        status:
+          type: string
+          minLength: 1
+        reason:
+          type: string
+          minLength: 1
+        message:
+          type: string
+          minLength: 1
+        date:
+          type: string
+          minLength: 1
+      required:
+        - status
+        - reason
+        - message
+        - date
+      x-examples:
+        OK:
+          status: OK
+          reason: '201'
+          message: Micrositio creado correctamente
+          date: '2021-03-26T16:19:31-05:00'
+        Unauthorized:
+          status: FAILED
+          reason: '401'
+          message: 'La autenticación no contiene todos los parámetros requeridos (login, tranKey, seed, nonce)'
+          date: '2021-03-26T16:26:03-05:00'
+      x-stoplight:
+        id: b28bkxv68v84s
+    Error:
+      title: Error
+      type: object
+      x-examples:
+        example:
+          name:
+            - El valor ingresado en el campo de nombre ya ha sido registrado.
+      properties:
+        key:
+          type: object
+          properties:
+            key:
+              type: array
+              items:
+                type: string
+      x-stoplight:
+        id: uia57rb56yncs
+    Auth:
+      description: ''
+      type: object
+      x-examples:
+        example:
+          login: usuarioprueba
+          tranKey: T9O+x3lNlQUf0ipuEuenPvBPlWs=
+          nonce: Yzkw0DVl0DJkZWJiODJiMDk1NTU9OTA5OGJlM7Q3Y2E=
+          seed: '2021-03-28T18:17:23-04:00'
+        example-2:
+          login: string
+          tranKey: string
+          nonce: string
+          seed: '2019-08-24T14:15:22-04:00'
+      properties:
+        login:
+          type: string
+          minLength: 1
+        tranKey:
+          type: string
+          minLength: 1
+        nonce:
+          type: string
+          minLength: 1
+        seed:
+          type: string
+          minLength: 1
+          format: date-time
+      required:
+        - login
+        - tranKey
+        - nonce
+        - seed
+      x-stoplight:
+        id: mdwjxk2r4vxv4
