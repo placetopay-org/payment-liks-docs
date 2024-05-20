@@ -5,7 +5,7 @@
   },
   "info": {
     "version": "1.0",
-    "title": "API para Link de pagos",
+    "title": "Link de pagos",
     "description": "La API de PlaceToPay para enlaces de pagos permite a los comerciantes crear enlaces de pago personalizados que los clientes pueden utilizar para realizar pagos de productos y servicios de forma segura. Los enlaces de pago se pueden personalizar con detalles específicos de la transacción. Tambien ofrece la posibilidad de consultar la información de un link que ha sido creado previamente para conocer el estado de las transacciones realizadas a través de este."
   },
   "servers": [
@@ -155,9 +155,12 @@
                       ]
                     }
                   },
-                  "adittional": {
+                  "additional": {
                     "type": "object",
                     "description": "Campos adicionales para link de pago",
+                    "x-stoplight": {
+                      "id": "mk9s930pmeg1e"
+                    },
                     "properties": {
                       "name": {
                         "type": "string",
@@ -288,7 +291,7 @@
         }
       }
     },
-    "/api/payment-link/{link}": {
+    "/api/payment-link/{link_id}": {
       "post": {
         "summary": "Consultar un link de pago",
         "description": "Utiliza este endpoint para consultar links de pagos que hayan sido creados previamente\r\n\r\n**Nota:** Solo te sera posible consultar links de pago asociados a tu sitio",
@@ -366,6 +369,21 @@
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "required": [
+                    "id",
+                    "status",
+                    "url",
+                    "expiration_date",
+                    "name",
+                    "reference",
+                    "description",
+                    "total_payments",
+                    "available_payments",
+                    "payment_expiration",
+                    "currency",
+                    "amount",
+                    "site"
+                  ],
                   "properties": {
                     "id": {
                       "type": "integer",
@@ -449,6 +467,14 @@
                     "site": {
                       "type": "object",
                       "description": "Informacion del sitio asociado al link de pago",
+                      "required": [
+                        "id",
+                        "name",
+                        "currencies",
+                        "default_currency",
+                        "default_country",
+                        "locale"
+                      ],
                       "properties": {
                         "id": {
                           "type": "integer",
@@ -463,10 +489,6 @@
                           "examples": [
                             "Ebus PFKR 2"
                           ]
-                        },
-                        "display_name": {
-                          "type": "string",
-                          "description": "Nombre para mostrar del sitio"
                         },
                         "currencies": {
                           "type": "array",
@@ -499,15 +521,7 @@
                             "ES"
                           ]
                         }
-                      },
-                      "required": [
-                        "id",
-                        "name",
-                        "currencies",
-                        "default_currency",
-                        "default_country",
-                        "locale"
-                      ]
+                      }
                     },
                     "payments": {
                       "type": "array",
@@ -602,22 +616,7 @@
                         }
                       }
                     }
-                  },
-                  "required": [
-                    "id",
-                    "status",
-                    "url",
-                    "expiration_date",
-                    "name",
-                    "reference",
-                    "description",
-                    "total_payments",
-                    "available_payments",
-                    "payment_expiration",
-                    "currency",
-                    "amount",
-                    "site"
-                  ]
+                  }
                 }
               }
             }
@@ -678,29 +677,31 @@
         "x-stoplight": {
           "id": "08ix4elnc4kxf"
         }
-      }
-    },
-    "/api/payment-link/disable/{link}": {
+      },
       "parameters": [
         {
           "schema": {
             "type": "string"
           },
-          "name": "link",
+          "name": "link_id",
           "in": "path",
           "required": true
-        },
+        }
+      ]
+    },
+    "/api/payment-link/disable/{link_id}": {
+      "parameters": [
         {
           "schema": {
             "type": "string"
           },
-          "name": "link",
+          "name": "link_id",
           "in": "path",
           "required": true
         }
       ],
       "post": {
-        "summary": "Desactivar un link de pago ( En desarrollo )",
+        "summary": "Desactivar un link de pago",
         "tags": [],
         "responses": {
           "200": {
