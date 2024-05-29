@@ -3,21 +3,21 @@ x-stoplight:
   id: 77vbitm5d3ufw
 info:
   version: '1.0'
-  title: Microsites
+  title: Micrositios
   contact: ''
 servers:
   - url: 'https://dev.placetopay.com/microsites'
 paths:
   /api/microsites:
     post:
-      summary: Create an open/closed Microsite
+      summary: Crear micrositios
       responses:
         '201':
           $ref: '#/components/responses/Status - OK'
         '401':
           $ref: '#/components/responses/Status - Unauthorized'
         '422':
-          description: Unprocessable Entity (WebDAV)
+          description: Solicitud con datos incorrectos
           content:
             application/json:
               schema:
@@ -48,38 +48,34 @@ paths:
                         - El valor ingresado en el campo de alias ya ha sido registrado.
       operationId: post-api-microsites
       description: |
-        This endpoint helps to create one microsite (open/closed), it's exclusive for a microsites api users, the microsite is created enable by default.
+        Permite crear micrositios (Abiertos/Cerrados), el micrositio creado es habilitado por defecto (de no indicarse lo contrario)
 
-        - **auth:** service authentication credentials. 
-          - **login** Site identifier.
-          - **tranKey** Transactional key: Base64(SHA-1(nonce + seed + secretkey)). The nonce field must be in the original format (without Base64).
-          - **nonce** Ramdom value Base64 encoded.
-          - **seed** current date in ISO 8601 format.
+        - **auth:** Credenciales de autenticación
+          - **login** Identificador del sitio.
+          - **tranKey** Llave transaccional del sitio.
+          - **nonce** Valor aleatorio codificado  en base 64.
+          - **seed** Fecha actual en formato ISO 8601.
 
-        - **type:** This field is required, you must to send *OPEN* or *CLOSED*
+        - **type:** Tipo de micrositio a crear.
 
-        - **categories:** This field is mandatory, you must to send once or many *category alias*, it's an array.
+        - **categories:** Categorias asociadas al micrositio.
 
-        - **sites:** This field is mandatory, you must to send at least one Panel site id, it's an array.
+        - **sites:** Sitios asociados al micrositio en el Panel Administrativo.
 
-        - **loginFields:** This field is mandatory only when type is *CLOSED*
+        - **paymentExpiration:** Tiempo de expiración de la sesión de pago en minutos.
 
-        - **header**, **logo**, **footer** are optional.
-
-        - **paymentExpiration:** WebCheckout time expiration in minutes, 10 minutes by default. It's an optional field.
-
-        - Available configuration options for payments. All are optional fields.
+        - Opciones de configuración disponibles para pagos. Todos son campos _opcionales_.
           - allowPartial
-          - isNoBuyerFill (only *CLOSED* type)
-          - allowDispersion (only *CLOSED* type)
           - allowPayWithDuplicateReference
-          - allowUnlimitedInstallments (only *CLOSED* type)
-          - autoReferenced (only *OPEN* type)
-          - allowRecurrence (only *OPEN* type)
-          - notSendBuyerAsPayer (only *OPEN* type)
-          - onlyPaymentLink (only *OPEN* type)
+          - isNoBuyerFill (solo aplica para *CLOSED*)
+          - allowDispersion (solo aplica para *CLOSED*)
+          - allowUnlimitedInstallments (solo aplica para *CLOSED*)
+          - autoReferenced (solo aplica para *OPEN*)
+          - allowRecurrence (solo aplica para *OPEN*)
+          - notSendBuyerAsPayer (solo aplica para *OPEN*)
+          - onlyPaymentLink (solo aplica para *OPEN*)
 
-        - Available configuration options for invoice session (only *CLOSED* type). All are optional fields.
+        - Opciones de configuración disponibles para el listado de ordenes de pago (solo aplica para *CLOSED*). Todos son campos _opcionales_.
           - exactSearchByReference
           - showDescription
           - allowShowDebtorName
@@ -94,135 +90,141 @@ paths:
         content:
           multipart/form-data:
             schema:
-              description: ''
+              description: 'Creación de micrositios'
               type: object
               properties:
                 auth:
                   $ref: '#/components/schemas/Auth'
                 name:
                   type: string
-                  minLength: 1
+                  minLength: 3
+                  maxLength: 64
+                  description: Nombre usado en el panel, vistas y formularios de pago y otros reportes.
                 alias:
                   type: string
-                  minLength: 1
+                  minLength: 3
+                  maxLength: 32
+                  description: Complemento de la url con el que se podrá acceder al micrositio desde internet, por ejemplo https://dev.placetopay.com/_mi-alias_.
                 type:
                   type: string
-                  description: Allowed values "OPEN" or "CLOSED"
+                  description: Define del tipo de micrositio a crear. Valores permitidos "OPEN" or "CLOSED".
                 categories:
                   type: array
+                  description: Alias de las categorias asociadas, están deben ser creadas o consultadas previamente por el administrador del sistema.
                   items:
                     type: string
                 sites:
                   type: array
+                  description: Identificadores de los sitios a los que puede pertenecer el micrositio, puede ser uno o muchos. Mínimo uno debe ser definido.
                   items:
                     type: integer
                 loginFields:
                   type: array
                   minItems: 2
-                  description: Allowed values document|reference|alt_reference
+                  description: Define los campos de acceso para iniciar la sesión de pago. Valores permitidos document|reference|alt_reference, requerido cuando el `type` es CLOSED.
                 header:
                   type: string
                   format: binary
-                  description: Allowed jpg|jpeg|png|svg
+                  description: Imágen de encabezado mostrado durante el proceso de pago. Formatos de archivos permitidos jpg|jpeg|png|svg.
                 logo:
                   type: string
                   format: binary
-                  description: Allowed jpg|jpeg|png|svg
+                  description: Imágen mostrada en la búsqueda de micrositios (si aplica, ver `hide`). Formatos de archivos permitidos jpg|jpeg|png|svg.
                 footer:
                   type: string
                   format: binary
-                  description: Allowed jpg|jpeg|png|svg
+                  description: Imágen de pie de página mostrado durante el proceso de pago. Formatos de archivos permitidos jpg|jpeg|png|svg.
                 paymentExpiration:
                   type: integer
-                  description: 10 by default
+                  description: Expiración (en minutos) de la sesión de pago una vez se realiza la redirección, por defecto son 10 minutos.
                 disabled:
                   type: boolean
                   default: false
-                  description: Disable/Enable the Microsite
+                  description: Determina si el micrositio está activo (`true`) o inactivo (`false`).
                 useWcLightbox:
                   type: boolean
                   default: false
-                  description: Redirection using Lightbox
+                  description: Determina si se debe hacer redirección o levantar un [lightbox](https://docs.placetopay.dev/checkout/lightbox) durante el proceso de pago.
                 hide:
                   type: boolean
                   default: false
-                  description: Hide in the public search list
+                  description: Permite configurar si el micrositio está disponible (`true`) o no (`false`) en el listado de búsqueda presentado al público en general.
                 allowPartial:
                   type: boolean
                   default: false
-                  description: Allows mixed payments
+                  description: Permite configurar si se aceptan pagos parciales de los montos para completar el monto total usando varios métodos y formas de pago.
                 isNoBuyerFill:
                   type: boolean
                   default: true
-                  description: Pre-fill payer information
+                  description: Permite prediligenciar los datos del pagador en la sesión de pago o no. Solo aplica para *CLOSED*.
                 allowDispersion:
                   type: boolean
                   default: false
-                  description: Allows payments with dispersion
+                  description: Habilitar pagos con dispersión de fondos. Solo aplica para *CLOSED*.
                 allowPayWithDuplicateReference:
                   type: boolean
                   default: false
-                  description: Allows multiple payments with the same reference
+                  description: Permitir pagos con referencias duplicadas.
                 allowUnlimitedInstallments:
                   type: boolean
                   default: false
-                  description: Allow unlimited deposits
+                  description: Permitir depósitios ilimitados. Solo aplica para *CLOSED*.
                 autoReferenced:
                   type: boolean
                   default: false
-                  description: Automatically generate references
+                  description: Generar referencias aleatorias en el proceso de pago. Solo aplica para *OPEN*.
                 allowRecurrence:
                   type: boolean
                   default: false
-                  description: Enable recurrence
+                  description: Permitir la configuración de recurrencias. Solo aplica para *OPEN*.
                 notSendBuyerAsPayer:
                   type: boolean
                   default: true
-                  description: Send buyer as payer
+                  description: Normalmente en el micrositio se captura los datos del comprador (buyer) y los datos del pagador (payer) se capturan en el proceso de pago. Esta configuración permite definir al comprador como el pagador usando los mismos datos. Solo aplica para *OPEN*.
                 onlyPaymentLink:
                   type: boolean
                   default: false
-                  description: Only available using Payment Link
+                  description: Determina si el micrositio solo se puede consumir usando [Links de Pago](https://placetopay-api.stoplight.io/docs/payment-links-docs/kl7noeqc5z13m-introduccion). Solo aplica para *OPEN*.
                 exactSearchByReference:
                   type: boolean
                   default: false
-                  description: Show only invoice with reference associated to access fields
+                  description: Determina si en el listado de ordenes de pago se debe mostrar únicamente la orden de pago asociada a los datos de inición de sesión suministrados. Solo aplica para *CLOSED*.
                 allowPayMultipleInvoicesAtOnce:
                   type: boolean
                   default: false
-                  description: Allows you to pay multiple invoices at once
+                  description: Permite definir si se permiten pagar múltiples ordenes de pago en una sola transacción agrupandolas en un solo monto de pago. Solo aplica para *CLOSED*.
                 showDescription:
                   type: boolean
                   default: true
-                  description: Show the description of the payment order
+                  description: Permite configurar si la información de _descripción_ de la orden de pago se muestra en el listado de ordenes de pago luego de iniciar una sesión de pago. Solo aplica para *CLOSED*.
                 allowShowDebtorName:
                   type: boolean
                   default: false
-                  description: Show name of the person responsible for the payment order
+                  description: Permite configurar si la información de _persona responsable_ de la orden de pago se muestra en el listado de ordenes de pago luego de iniciar una sesión de pago. Solo aplica para *CLOSED*.
                 allowSendDebtorCode:
                   type: boolean
                   default: false
-                  description: Allows to use the alternate reference as the payment description
+                  description: Permite configurar la _referencia alterna_ como _descripción_ del pago. Solo aplica para *CLOSED*.
                 allowChangeTotal:
                   type: boolean
                   default: false
-                  description: Allows to change the total of the invoice
+                  description: Permite cambiar el monto total al pagar de la orden de pago. Solo aplica para *CLOSED*.
                 olderFirst:
                   type: boolean
                   default: false
-                  description: Pay older first
+                  description: Define si se deben pagar las ordenes antiguas primero (basado en la fecha creación/generación de la orden). Solo aplica para *CLOSED*.
                 allowSeeHistoryPayments:
                   type: boolean
                   default: true
-                  description: Allows to see payment history
+                  description: Determina si se puede ver el histórico de pagos asociados en el listado de ordenes de pago. Solo aplica para *CLOSED*.
                 loginFromUrl:
                   type: boolean
                   default: true
-                  description: Allows login by URL (GET)
+                  description: Determina si se puede iniciar sesión de pago usando los datos de autenticación entregados por URL (GET). Solo aplica para *CLOSED*.
                 flushInvoices:
                   type: boolean
                   default: true
-                  description: Delete expired and unpaid invoices
+                  description: Habilita la eliminación de ordenes de pago expiradas y no pagadas de forma automática. Solo aplica para *CLOSED*.
               required:
                 - auth
                 - name
@@ -254,11 +256,11 @@ paths:
                     tranKey: ''
                     nonce: ''
                     seed: ''
-                  name: Test closed 10
-                  alias: m-closed-10
+                  name: Inmobiliaria La Mejor
+                  alias: la-mejor
                   type: CLOSED
                   categories:
-                    - test_tecnologia
+                    - inmobiliarias
                   sites:
                     - 4
                     - 32
@@ -274,14 +276,13 @@ paths:
                     tranKey: ''
                     nonce: ''
                     seed: ''
-                  name: Test open 11
-                  alias: m-open-11
+                  name: Donaciones El Jefe
+                  alias: ayudas-el-jefe
                   type: OPEN
                   categories:
-                    - test_tecnologia
+                    - donaciones_y_ayudas
                   sites:
-                    - 4
-                    - 32
+                    - 312
                   allowRecurrence: true
                   allowPartial: true
       x-stoplight:
@@ -289,7 +290,7 @@ paths:
 components:
   responses:
     Status - OK:
-      description: Status Response
+      description: Correcta
       content:
         application/json:
           schema:
@@ -309,7 +310,7 @@ components:
                   message: Micrositio creado correctamente
                   date: '2021-03-26T16:19:31-05:00'
     Status - Unauthorized:
-      description: Status Response
+      description: No autorizado
       content:
         application/json:
           schema:
@@ -321,35 +322,35 @@ components:
             required:
               - status
           examples:
-            Unauthorized:
+            Autenticación inexistente:
               value:
                 status:
                   status: FAILED
                   reason: '401'
                   message: 'La autenticación no contiene todos los parámetros requeridos (login, tranKey, seed, nonce)'
                   date: '2021-03-26T16:26:03-05:00'
-            Bad login:
+            Autenticación incorrecta:
               value:
                 status:
                   status: FAILED
                   reason: '401'
                   message: Autenticación fallida 101
                   date: '2021-03-26T16:29:45-05:00'
-            Inactive User:
+            Usuario inactivo:
               value:
                 status:
                   status: FAILED
                   reason: '401'
                   message: Autenticación fallida 104
                   date: '2021-03-26T16:29:45-05:00'
-            Bad TranKey:
+            TranKey erroneo:
               value:
                 status:
                   status: FAILED
                   reason: '401'
                   message: Autenticación fallida 102
                   date: '2021-03-26T16:29:45-05:00'
-            Bad Seed:
+            Semilla erronea:
               value:
                 status:
                   status: FAILED
@@ -364,15 +365,19 @@ components:
         status:
           type: string
           minLength: 1
+          description: Estado de error retornado en la solicitud. Valores permitidos "OK", "FAILED"
         reason:
           type: string
           minLength: 1
+          description: Código de error retornado en la solicitud.
         message:
           type: string
           minLength: 1
+          description: Descripción o detalle de error retornado en la solicitud.
         date:
           type: string
-          minLength: 1
+          minLength: 25
+          description: Fecha en formato ISO 8601.
       required:
         - status
         - reason
@@ -417,11 +422,6 @@ components:
           tranKey: T9O+x3lNlQUf0ipuEuenPvBPlWs=
           nonce: Yzkw0DVl0DJkZWJiODJiMDk1NTU9OTA5OGJlM7Q3Y2E=
           seed: '2021-03-28T18:17:23-04:00'
-        example-2:
-          login: string
-          tranKey: string
-          nonce: string
-          seed: '2019-08-24T14:15:22-04:00'
       properties:
         login:
           type: string

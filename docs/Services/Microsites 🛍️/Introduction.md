@@ -2,23 +2,18 @@
 stoplight-id: c5u2vshxbdks7
 ---
 
-# Introduction
+# Introducción
 
-The Placetopay Microsites API enables the creation and management of microsites. These microsites can be either open or closed and are designed for specific users of the microsites API. The API offers a robust and secure interface for creating, authenticating, and managing microsites.
+La API de Micrositios de Placetopay permite la creación y gestión de micrositios. Estos micrositios pueden ser abiertos o cerrados. La API ofrece una interfaz sólida y segura para crear, autenticar y administrar micrositios.
 
-## Authentication
+## Autenticación
 
-To interact with the Microsites API, service authentication credentials are required. The authentication parameters are as follows:
+Para interactuar con la API de Micrositios, se requieren credenciales de autenticación del servicio. Los parámetros de autenticación pueden ser consultado [aquí](https://docs.placetopay.dev/checkout/authentication)
 
-- **login**: Site identifier.
-- **tranKey**: Transactional key generated using the formula Base64(SHA-1(nonce + seed + secretkey)). The nonce field must be in its original format (not Base64 encoded).
-- **nonce**: Random value encoded in Base64.
-- **seed**: Current date in ISO 8601 format.
+## Contacto
 
-## Contact
-
-For more information, please contact the Placetopay support team.
+Para obtener más información, comuníquese con el equipo de soporte de Placetopay.
 
 ---
 
-This documentation provides an overview of the main features and authentication requirements of the Placetopay Microsites API. For complete details, please refer to the full API specification.
+Esta documentación proporciona una descripción general de las principales características y requisitos de autenticación de la API de Micrositios de Placetopay. Para obtener detalles completos, consulte la especificación API completa.
